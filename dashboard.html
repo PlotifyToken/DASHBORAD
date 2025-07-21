@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>UnlockLand Dashboard</title>
+  <meta http-equiv="refresh" content="60">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif;
+      background: #ffffff;
+      color: #37352f;
+      min-height: 100vh;
+      padding: 60px;
+      line-height: 1.5;
+    }
+
+    .dashboard-container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .header {
+      margin-bottom: 80px;
+      text-align: left;
+    }
+
+    .logo {
+      font-size: 3.5rem;
+      font-weight: 700;
+      color: #000000;
+      margin-bottom: 16px;
+      letter-spacing: -0.01em;
+    }
+
+    .subtitle {
+      font-size: 1.2rem;
+      color: #787774;
+      font-weight: 400;
+    }
+
+    .metrics-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 32px;
+      margin-bottom: 60px;
+    }
+
+    .metric-card {
+      background: #ffffff;
+      border: 1px solid #e9e9e7;
+      border-radius: 8px;
+      padding: 40px 32px;
+      transition: all 0.2s ease;
+      position: relative;
+    }
+
+    .metric-card:hover {
+      border-color: #d3d3d1;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+    }
+
+    .metric-header {
+      display: flex;
+      align-items: center;
+      margin-bottom: 24px;
+    }
+
+    .metric-icon {
+      width: 24px;
+      height: 24px;
+      margin-right: 12px;
+      font-size: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .metric-label {
+      font-size: 1rem;
+      font-weight: 500;
+      color: #787774;
+      margin: 0;
+    }
+
+    .metric-value {
+      font-size: 3.5rem;
+      font-weight: 700;
+      color: #000000;
+      line-height: 1.1;
+      margin: 0;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .users .metric-icon { color: #2383e2; }
+    .revenue .metric-icon { color: #448361; }
+    .subscriptions .metric-icon { color: #9065b0; }
+
+    .status-bar {
+      background: #f7f6f3;
+      border: 1px solid #e9e9e7;
+      border-radius: 8px;
+      padding: 24px 32px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.875rem;
+    }
+
+    .status-left {
+      display: flex;
+      gap: 32px;
+    }
+
+    .status-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: #787774;
+    }
+
+    .status-indicator {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #448361;
+      flex-shrink: 0;
+    }
+
+    .status-indicator.error {
+      background: #e03e3e;
+    }
+
+    .status-indicator.warning {
+      background: #d9730d;
+    }
+
+    .update-time {
+      color: #9b9a97;
+      font-size: 0.875rem;
+      font-weight: 400;
+    }
+
+    /* TV adaptations */
+    @media (min-width: 1920px) {
+      body { padding: 80px; }
+      .logo { font-size: 4.5rem; }
+      .subtitle { font-size: 1.4rem; }
+      .metric-value { font-size: 4.5rem; }
+      .metric-label { font-size: 1.1rem; }
+      .metrics-grid { gap: 48px; }
+      .metric-card { padding: 60px 48px; }
+      .status-bar { padding: 32px 48px; font-size: 1rem; }
+    }
+
+    /* 4K adaptations */
+    @media (min-width: 3840px) {
+      body { padding: 120px; }
+      .logo { font-size: 6rem; }
+      .subtitle { font-size: 1.8rem; }
+      .metric-value { font-size: 6rem; }
+      .metric-label { font-size: 1.4rem; }
+      .metrics-grid { gap: 64px; }
+      .metric-card { padding: 80px 64px; }
+      .status-bar { padding: 48px 64px; font-size: 1.2rem; }
+      .metric-icon { width: 32px; height: 32px; font-size: 28px; margin-right: 16px; }
+    }
+
+    /* Dark mode support */
+    @media (prefers-color-scheme: dark) {
+      body {
+        background: #191919;
+        color: #e9e9e7;
+      }
+      
+      .logo {
+        color: #ffffff;
+      }
+      
+      .subtitle {
+        color: #9b9a97;
+      }
+      
+      .metric-card {
+        background: #1f1f1f;
+        border-color: #373530;
+      }
+      
+      .metric-card:hover {
+        border-color: #4a4a46;
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+      }
+      
+      .metric-value {
+        color: #ffffff;
+      }
+      
+      .status-bar {
+        background: #1f1f1f;
+        border-color: #373530;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="dashboard-container">
+    <div class="header">
+      <h1 class="logo">UnlockLand</h1>
+      <p class="subtitle">Real-time Business Dashboard</p>
+    </div>
+
+    <div class="metrics-grid">
+      <div class="metric-card users">
+        <div class="metric-header">
+          <div class="metric-icon">👥</div>
+          <h3 class="metric-label">Total Users</h3>
+        </div>
+        <div class="metric-value">372</div>
+      </div>
+
+      <div class="metric-card revenue">
+        <div class="metric-header">
+          <div class="metric-icon">💰</div>
+          <h3 class="metric-label">Annual Recurring Revenue</h3>
+        </div>
+        <div class="metric-value">$48.00</div>
+      </div>
+
+      <div class="metric-card subscriptions">
+        <div class="metric-header">
+          <div class="metric-icon">⭐</div>
+          <h3 class="metric-label">Active Subscriptions</h3>
+        </div>
+        <div class="metric-value">4</div>
+      </div>
+    </div>
+
+    <div class="status-bar">
+      <div class="status-left">
+        <div class="status-item">
+          <div class="status-indicator"></div>
+          <span>Customer.io real data</span>
+        </div>
+        <div class="status-item">
+          <div class="status-indicator"></div>
+          <span>RevenueCat real data</span>
+        </div>
+      </div>
+      <div class="update-time">Updated 11:41</div>
+    </div>
+  </div>
+</body>
+</html>
