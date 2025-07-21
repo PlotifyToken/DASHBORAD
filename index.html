@@ -338,10 +338,10 @@
       // 立即获取一次数据
       fetchData();
       
-      // 每5分钟更新一次
-      updateInterval = setInterval(fetchData, 5 * 60 * 1000);
+      // 每1分钟更新一次
+      updateInterval = setInterval(fetchData, 1 * 60 * 1000);
       
-      console.log('Auto-update started (every 5 minutes)');
+      console.log('Auto-update started (every 1 minute)');
     }
 
     // 停止更新
