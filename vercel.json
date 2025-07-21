@@ -1,17 +1,9 @@
 {
-  "version": 2,
   "functions": {
     "api/data.py": {
-      "runtime": "python3.9",
       "maxDuration": 30
     }
   },
-  "rewrites": [
-    {
-      "source": "/api/data",
-      "destination": "/api/data.py"
-    }
-  ],
   "headers": [
     {
       "source": "/api/(.*)",
@@ -22,7 +14,7 @@
         },
         {
           "key": "Access-Control-Allow-Methods",
-          "value": "GET, POST, PUT, DELETE, OPTIONS"
+          "value": "GET, POST, OPTIONS"
         },
         {
           "key": "Access-Control-Allow-Headers",
