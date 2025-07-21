@@ -1,11 +1,11 @@
 {
   "version": 2,
-  "builds": [
-    {
-      "src": "api/data.py",
-      "use": "@vercel/python"
+  "functions": {
+    "api/data.py": {
+      "runtime": "python3.9",
+      "maxDuration": 30
     }
-  ],
+  },
   "routes": [
     {
       "src": "/api/data",
@@ -16,11 +16,6 @@
       "dest": "/index.html"
     }
   ],
-  "functions": {
-    "api/data.py": {
-      "maxDuration": 30
-    }
-  },
   "headers": [
     {
       "source": "/api/(.*)",
