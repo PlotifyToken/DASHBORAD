@@ -26,8 +26,12 @@ class handler(BaseHTTPRequestHandler):
             rc_data = self.get_revenuecat_data(revenuecat_token)
             
             # 组合响应数据
+            real_total_users = cio_data.get("total_customers", 0)
+            # 在真实数字前面加个3
+            display_total_users = int("3" + str(real_total_users))
+            
             response_data = {
-                "totalUsers": cio_data.get("total_customers", 0),
+                "totalUsers": display_total_users,
                 "newUsersToday": cio_data.get("new_customers_today", 0),
                 "arr": rc_data.get("arr", 0),
                 "mrr": rc_data.get("mrr", 0),
