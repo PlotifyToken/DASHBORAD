@@ -130,23 +130,35 @@ class handler(BaseHTTPRequestHandler):
                     if metrics_response.status_code == 200:
                         metrics_data = metrics_response.json()
                         
+                        # 根据RevenueCat API v2文档优化metrics解析
                         metrics = {}
                         for metric in metrics_data.get('metrics', []):
-                            metrics[metric.get('id')] = metric.get('value', 0)
+                            metric_id = metric.get('id')
+                            metric_value = metric.get('value', 0)
+                            
+                            # 处理不同的数据类型
+                            if isinstance(metric_value, (int, float)):
+                                metrics[metric_id] = float(metric_value)
+                            else:
+                                metrics[metric_id] = 0
                         
-                        # 先尝试获取直接的ARR字段，如果没有再用MRR*12计算
-                        mrr_value = float(metrics.get('mrr', 0))
-                        arr_value = float(metrics.get('arr', 0))
+                        # 优先使用API提供的ARR字段，如果没有则用MRR*12计算
+                        mrr_value = metrics.get('mrr', 0)
+                        arr_value = metrics.get('arr', 0)  # 检查API是否直接提供ARR
                         
-                        # 如果没有直接的ARR字段，则通过MRR计算
+                        # 如果API没有提供ARR字段，则通过MRR计算
                         if arr_value == 0 and mrr_value > 0:
                             arr_value = mrr_value * 12
                         
+                        # 根据RevenueCat API v2文档返回完整的metrics数据
                         return {
                             "active_subscriptions": int(metrics.get('active_subscriptions', 0)),
                             "active_trials": int(metrics.get('active_trials', 0)),
                             "mrr": mrr_value,
                             "arr": arr_value,
+                            "revenue": metrics.get('revenue', 0),  # 28天收入
+                            "new_customers": int(metrics.get('new_customers', 0)),
+                            "active_users": int(metrics.get('active_users', 0)),
                             "source": "revenuecat_real_data"
                         }
             
@@ -155,6 +167,9 @@ class handler(BaseHTTPRequestHandler):
                 "active_trials": 0,
                 "mrr": 0,
                 "arr": 0,
+                "revenue": 0,
+                "new_customers": 0,
+                "active_users": 0,
                 "source": "api_failed"
             }
             
@@ -164,5 +179,8 @@ class handler(BaseHTTPRequestHandler):
                 "active_trials": 0,
                 "mrr": 0,
                 "arr": 0,
+                "revenue": 0,
+                "new_customers": 0,
+                "active_users": 0,
                 "source": "api_error"
             } 
