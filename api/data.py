@@ -26,12 +26,10 @@ class handler(BaseHTTPRequestHandler):
             rc_data = self.get_revenuecat_data(revenuecat_token)
             
             # 组合响应数据
-            real_total_users = cio_data.get("total_customers", 0)
-            # 在真实数字前面加个3
-            display_total_users = int("3" + str(real_total_users))
+            total_users = cio_data.get("total_customers", 0)
             
             response_data = {
-                "totalUsers": display_total_users,
+                "totalUsers": total_users,
                 "newUsersToday": cio_data.get("new_customers_today", 0),
                 "arr": rc_data.get("arr", 0),
                 "mrr": rc_data.get("mrr", 0),
@@ -136,11 +134,19 @@ class handler(BaseHTTPRequestHandler):
                         for metric in metrics_data.get('metrics', []):
                             metrics[metric.get('id')] = metric.get('value', 0)
                         
+                        # 先尝试获取直接的ARR字段，如果没有再用MRR*12计算
+                        mrr_value = float(metrics.get('mrr', 0))
+                        arr_value = float(metrics.get('arr', 0))
+                        
+                        # 如果没有直接的ARR字段，则通过MRR计算
+                        if arr_value == 0 and mrr_value > 0:
+                            arr_value = mrr_value * 12
+                        
                         return {
                             "active_subscriptions": int(metrics.get('active_subscriptions', 0)),
                             "active_trials": int(metrics.get('active_trials', 0)),
-                            "mrr": float(metrics.get('mrr', 0)),
-                            "arr": float(metrics.get('mrr', 0)) * 12,
+                            "mrr": mrr_value,
+                            "arr": arr_value,
                             "source": "revenuecat_real_data"
                         }
             
