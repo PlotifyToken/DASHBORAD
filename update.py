@@ -692,7 +692,7 @@ def generate_dashboard():
     elif cio_data['source'] == 'api_call_failed':
         total_users_display = "API Call Failed"
     else:
-        total_users_display = f"{total_users:,}"
+        total_users_display = total_users  # 保存数值，稍后格式化
     
     # Simplified status information (TV display friendly)
     cio_status_map = {
@@ -716,7 +716,7 @@ def generate_dashboard():
     if isinstance(total_users_display, str):
         formatted_users = total_users_display  # 保持错误信息显示
     else:
-        formatted_users = format_count(total_users)
+        formatted_users = format_count(total_users_display)
     
     formatted_arr = format_number(arr)
     formatted_subs = format_count(active_subs)
