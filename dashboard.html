@@ -259,104 +259,103 @@
     </div>
   </div>
   <script>
-    // 格式化数字函数
+    console.log('Script loading...');
+    
+    // 格式化函数 - 简化版本
     function formatNumber(num) {
       if (num >= 1000000) {
-        return `$${(num/1000000).toFixed(1)}M`;
+        return '$' + (num/1000000).toFixed(1) + 'M';
       } else if (num >= 1000) {
-        return `$${Math.round(num/1000)}K`;
+        return '$' + Math.round(num/1000) + 'K';
       } else {
-        return `$${num.toLocaleString()}`;
+        return '$' + num.toLocaleString();
       }
     }
 
     function formatCount(num) {
       if (num >= 1000000) {
-        return `${(num/1000000).toFixed(1)}M`;
+        return (num/1000000).toFixed(1) + 'M';
       } else if (num >= 1000) {
-        return `${(num/1000).toFixed(1)}K`;
+        return (num/1000).toFixed(1) + 'K';
       } else {
         return num.toLocaleString();
       }
     }
 
-    // 获取和更新数据
-    async function updateDashboard() {
-      try {
-        console.log('Fetching data from API...');
-        const response = await fetch('/api/data');
-        const data = await response.json();
-        console.log('API data received:', data);
-        
-        // 格式化数据
-        const formattedUsers = formatCount(data.totalUsers);
-        const formattedArr = formatNumber(data.arr);
-        const formattedSubs = formatCount(data.activeSubscriptions);
-        
-        console.log('Formatted values:', {
-          users: `${data.totalUsers} → ${formattedUsers}`,
-          arr: `${data.arr} → ${formattedArr}`,
-          subs: `${data.activeSubscriptions} → ${formattedSubs}`
+    // 更新数据函数
+    function updateDashboard() {
+      console.log('Starting dashboard update...');
+      
+      fetch('/api/data')
+        .then(function(response) {
+          console.log('API response received');
+          return response.json();
+        })
+        .then(function(data) {
+          console.log('API data:', data);
+          
+          // 格式化数值
+          var formattedUsers = formatCount(data.totalUsers);
+          var formattedArr = formatNumber(data.arr);
+          var formattedSubs = formatCount(data.activeSubscriptions);
+          
+          console.log('Formatted:', {
+            users: data.totalUsers + ' -> ' + formattedUsers,
+            arr: data.arr + ' -> ' + formattedArr,
+            subs: data.activeSubscriptions + ' -> ' + formattedSubs
+          });
+          
+          // 更新DOM元素
+          var userEl = document.querySelector('.users .metric-value');
+          var revenueEl = document.querySelector('.revenue .metric-value');
+          var subsEl = document.querySelector('.subscriptions .metric-value');
+          
+          if (userEl) {
+            userEl.textContent = formattedUsers;
+            console.log('Updated users to:', formattedUsers);
+          }
+          if (revenueEl) {
+            revenueEl.textContent = formattedArr;
+            console.log('Updated revenue to:', formattedArr);
+          }
+          if (subsEl) {
+            subsEl.textContent = formattedSubs;
+            console.log('Updated subs to:', formattedSubs);
+          }
+          
+          // 更新状态
+          var statusSpans = document.querySelectorAll('.status-item span');
+          if (statusSpans.length >= 2) {
+            statusSpans[0].textContent = data.sources.customerIO;
+            statusSpans[1].textContent = data.sources.revenueCat;
+          }
+          
+          // 更新时间
+          var now = new Date();
+          var hours = now.getHours().toString().padStart(2, '0');
+          var minutes = now.getMinutes().toString().padStart(2, '0');
+          var timeStr = 'Updated ' + hours + ':' + minutes;
+          
+          var timeEl = document.querySelector('.update-time');
+          if (timeEl) {
+            timeEl.textContent = timeStr;
+          }
+          
+          console.log('Dashboard update completed');
+        })
+        .catch(function(error) {
+          console.error('Dashboard update failed:', error);
         });
-        
-        // 更新显示的数值
-        const usersElement = document.querySelector('.users .metric-value');
-        const revenueElement = document.querySelector('.revenue .metric-value');
-        const subsElement = document.querySelector('.subscriptions .metric-value');
-        
-        if (usersElement) usersElement.textContent = formattedUsers;
-        if (revenueElement) revenueElement.textContent = formattedArr;
-        if (subsElement) subsElement.textContent = formattedSubs;
-        
-        // 更新状态信息
-        const statusItems = document.querySelectorAll('.status-item span');
-        if (statusItems.length >= 2) {
-          statusItems[0].textContent = data.sources.customerIO;
-          statusItems[1].textContent = data.sources.revenueCat;
-        }
-        
-        // 更新时间
-        const now = new Date();
-        const timeStr = now.toLocaleTimeString('en-US', { 
-          hour12: false, 
-          hour: '2-digit', 
-          minute: '2-digit' 
-        });
-        const timeElement = document.querySelector('.update-time');
-        if (timeElement) timeElement.textContent = `Updated ${timeStr}`;
-        
-        console.log('Dashboard updated successfully');
-      } catch (error) {
-        console.error('Failed to update dashboard:', error);
-        
-        // 如果API失败，显示错误信息
-        const usersElement = document.querySelector('.users .metric-value');
-        const revenueElement = document.querySelector('.revenue .metric-value');
-        const subsElement = document.querySelector('.subscriptions .metric-value');
-        
-        if (usersElement) usersElement.textContent = 'Error';
-        if (revenueElement) revenueElement.textContent = 'Error';
-        if (subsElement) subsElement.textContent = 'Error';
-      }
     }
 
-    // 页面加载时立即更新
-    document.addEventListener('DOMContentLoaded', function() {
-      console.log('DOM loaded, starting dashboard update...');
+    // 立即执行
+    setTimeout(function() {
+      console.log('Executing dashboard update...');
       updateDashboard();
-    });
+    }, 100);
     
-    // 每30秒更新一次数据
+    // 每30秒更新
     setInterval(updateDashboard, 30000);
-    
-    // 备用：如果DOMContentLoaded已经过了，立即执行
-    if (document.readyState === 'loading') {
-      // 文档还在加载中，等待DOMContentLoaded
-    } else {
-      // 文档已经加载完成，立即执行
-      console.log('Document already loaded, updating dashboard...');
-      updateDashboard();
-    }
   </script>
 </body>
 </html>
