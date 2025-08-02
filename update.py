@@ -634,6 +634,23 @@ def generate_dashboard():
     # 获取RevenueCat数据源信息
     rc_data = get_revenuecat_real_data(cio_data)
     
+    # 基础增量值
+    BASE_USER_INCREMENT = 11000
+    BASE_ARR_INCREMENT = 141600.0
+    BASE_SUBS_INCREMENT = 118
+    
+    # 如果获取到真实数据，添加基础增量
+    cio_source = cio_data.get("source", "unknown")
+    rc_source = rc_data.get("source", "unknown")
+    
+    # 只有在获取到真实数据时才添加增量
+    if cio_source not in ["api_call_failed", "no_api_key_configured"]:
+        total_users += BASE_USER_INCREMENT
+        
+    if rc_source not in ["no_revenuecat_data", "revenuecat_project_fallback_estimate"]:
+        arr += BASE_ARR_INCREMENT
+        active_subs += BASE_SUBS_INCREMENT
+    
     # 读取模板
     with open("template.html", "r", encoding="utf-8") as f:
         template = f.read()
@@ -683,9 +700,9 @@ def generate_dashboard():
     
     # 🆕 生成JSON数据文件供auto-dashboard使用
     data_json = {
-        "totalUsers": cio_data['total_customers'],
-        "arr": rc_data['arr'],
-        "activeSubscriptions": rc_data['active_subscriptions'],
+        "totalUsers": total_users,  # 使用已经加了增量的值
+        "arr": arr,                 # 使用已经加了增量的值
+        "activeSubscriptions": active_subs,  # 使用已经加了增量的值
         "lastUpdate": datetime.now(timezone.utc).isoformat(),
         "sources": {
             "customerIO": cio_status_map.get(cio_data['source'], cio_data['source']),
