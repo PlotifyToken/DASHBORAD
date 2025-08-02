@@ -229,7 +229,7 @@
           <div class="metric-icon">💰</div>
           <h3 class="metric-label">Annual Recurring Revenue</h3>
         </div>
-        <div class="metric-value">$144K</div>
+        <div class="metric-value">$630</div>
       </div>
 
       <div class="metric-card subscriptions">
@@ -237,7 +237,7 @@
           <div class="metric-icon">⭐</div>
           <h3 class="metric-label">Active Subscriptions</h3>
         </div>
-        <div class="metric-value">126</div>
+        <div class="metric-value">7</div>
       </div>
     </div>
 
@@ -245,15 +245,76 @@
       <div class="status-left">
         <div class="status-item">
           <div class="status-indicator"></div>
-          <span>Customer.io real data</span>
+          <span>Customer.io real total</span>
         </div>
         <div class="status-item">
           <div class="status-indicator"></div>
-          <span>RevenueCat real data</span>
+          <span>RevenueCat needs permission</span>
         </div>
       </div>
-      <div class="update-time">Updated 08:26</div>
+      <div class="update-time">Updated 09:21</div>
     </div>
   </div>
+  <script>
+    // 格式化数字函数
+    function formatNumber(num) {
+      if (num >= 1000000) {
+        return `$${(num/1000000).toFixed(1)}M`;
+      } else if (num >= 1000) {
+        return `$${Math.round(num/1000)}K`;
+      } else {
+        return `$${num.toLocaleString()}`;
+      }
+    }
+
+    function formatCount(num) {
+      if (num >= 1000000) {
+        return `${(num/1000000).toFixed(1)}M`;
+      } else if (num >= 1000) {
+        return `${(num/1000).toFixed(1)}K`;
+      } else {
+        return num.toLocaleString();
+      }
+    }
+
+    // 获取和更新数据
+    async function updateDashboard() {
+      try {
+        const response = await fetch('/api/data');
+        const data = await response.json();
+        
+        // 更新显示的数值
+        document.querySelector('.users .metric-value').textContent = formatCount(data.totalUsers);
+        document.querySelector('.revenue .metric-value').textContent = formatNumber(data.arr);
+        document.querySelector('.subscriptions .metric-value').textContent = formatCount(data.activeSubscriptions);
+        
+        // 更新状态信息
+        const statusItems = document.querySelectorAll('.status-item span');
+        if (statusItems.length >= 2) {
+          statusItems[0].textContent = data.sources.customerIO;
+          statusItems[1].textContent = data.sources.revenueCat;
+        }
+        
+        // 更新时间
+        const now = new Date();
+        const timeStr = now.toLocaleTimeString('en-US', { 
+          hour12: false, 
+          hour: '2-digit', 
+          minute: '2-digit' 
+        });
+        document.querySelector('.update-time').textContent = `Updated ${timeStr}`;
+        
+        console.log('Dashboard updated:', data);
+      } catch (error) {
+        console.error('Failed to update dashboard:', error);
+      }
+    }
+
+    // 页面加载时立即更新
+    document.addEventListener('DOMContentLoaded', updateDashboard);
+    
+    // 每30秒更新一次数据
+    setInterval(updateDashboard, 30000);
+  </script>
 </body>
 </html>
