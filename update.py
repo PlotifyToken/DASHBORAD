@@ -618,6 +618,37 @@ def get_active_subscriptions(user_data: Optional[Dict[str, Any]] = None) -> int:
     rc_data = get_revenuecat_real_data(user_data)
     return rc_data.get("active_subscriptions", 0)
 
+# ============ 数字格式化函数 =============
+def format_number(num):
+    """
+    将大数字格式化为K/M形式
+    例如: 144048 -> $144K, 1200000 -> $1.2M
+    """
+    if isinstance(num, str):
+        return num
+    
+    if num >= 1000000:
+        return f"${num/1000000:.1f}M"
+    elif num >= 1000:
+        return f"${num/1000:.0f}K"
+    else:
+        return f"${num:,.0f}"
+
+def format_count(num):
+    """
+    将数量格式化为K/M形式（不带$符号）
+    例如: 12400 -> 12.4K, 1200000 -> 1.2M
+    """
+    if isinstance(num, str):
+        return num
+    
+    if num >= 1000000:
+        return f"{num/1000000:.1f}M"
+    elif num >= 1000:
+        return f"{num/1000:.1f}K"
+    else:
+        return f"{num:,}"
+
 # ============ 仪表板生成 =============
 def generate_dashboard():
     """生成仪表板HTML"""
@@ -681,10 +712,18 @@ def generate_dashboard():
         'unknown': 'RevenueCat unknown'
     }
     
-    # 替换模板占位符
-    html = template.replace("{{TOTAL_USERS}}", total_users_display)
-    html = html.replace("{{ARR}}", f"${arr:,.2f}")
-    html = html.replace("{{ACTIVE_SUBSCRIPTIONS}}", f"{active_subs:,}")
+    # 替换模板占位符 - 使用格式化函数
+    if isinstance(total_users_display, str):
+        formatted_users = total_users_display  # 保持错误信息显示
+    else:
+        formatted_users = format_count(total_users)
+    
+    formatted_arr = format_number(arr)
+    formatted_subs = format_count(active_subs)
+    
+    html = template.replace("{{TOTAL_USERS}}", formatted_users)
+    html = html.replace("{{ARR}}", formatted_arr)
+    html = html.replace("{{ACTIVE_SUBSCRIPTIONS}}", formatted_subs)
     
     # Replace status information
     current_time = datetime.now().strftime('%H:%M')

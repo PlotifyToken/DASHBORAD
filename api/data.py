@@ -4,6 +4,36 @@ import requests
 from datetime import datetime, timezone
 import os
 
+def format_number(num):
+    """
+    将大数字格式化为K/M形式
+    例如: 144048 -> $144K, 1200000 -> $1.2M
+    """
+    if isinstance(num, str):
+        return num
+    
+    if num >= 1000000:
+        return f"${num/1000000:.1f}M"
+    elif num >= 1000:
+        return f"${num/1000:.0f}K"
+    else:
+        return f"${num:,.0f}"
+
+def format_count(num):
+    """
+    将数量格式化为K/M形式（不带$符号）
+    例如: 12400 -> 12.4K, 1200000 -> 1.2M
+    """
+    if isinstance(num, str):
+        return num
+    
+    if num >= 1000000:
+        return f"{num/1000000:.1f}M"
+    elif num >= 1000:
+        return f"{num/1000:.1f}K"
+    else:
+        return f"{num:,}"
+
 class handler(BaseHTTPRequestHandler):
     def do_GET(self):
         try:
