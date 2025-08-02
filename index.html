@@ -315,8 +315,14 @@
           'api_error': 'RevenueCat error'
         };
         
+        console.log('Sources data:', data.sources);
+        console.log('RevenueCat source:', data.sources?.revenueCat);
+        
         const cioStatus = data.sources?.customerIO?.includes('real_data') ? 'success' : 'error';
         const rcStatus = data.sources?.revenueCat?.includes('real_data') ? 'success' : 'error';
+        
+        console.log('CIO Status:', cioStatus, 'RC Status:', rcStatus);
+        console.log('RC Status Text:', rcStatusMap[data.sources?.revenueCat]);
         
         updateStatus('cio', cioStatus, cioStatusMap[data.sources?.customerIO] || 'Customer.io unknown');
         updateStatus('rc', rcStatus, rcStatusMap[data.sources?.revenueCat] || 'RevenueCat unknown');
