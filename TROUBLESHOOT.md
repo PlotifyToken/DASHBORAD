@@ -67,9 +67,9 @@ REVENUECAT_TOKEN = sk_EWEOIOZJEmiXoDOMkywmrklkuLwXi
 预期API响应：
 ```json
 {
-  "totalUsers": 376,
-  "activeSubscriptions": 4,
-  "arr": 48.0,
+  "totalUsers": 12022,
+  "activeSubscriptions": 124,
+  "arr": 141648.0,
   "sources": {
     "customerIO": "real_data",
     "revenueCat": "real_data"

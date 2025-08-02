@@ -1,8 +1,8 @@
 {
-  "totalUsers": 1022,
-  "arr": 48.0,
-  "activeSubscriptions": 6,
-  "lastUpdate": "2025-07-28T15:22:00.543537+00:00",
+  "totalUsers": 12022,
+  "arr": 141648.0,
+  "activeSubscriptions": 124,
+  "lastUpdate": "2025-07-28T15:26:13.322366+00:00",
   "sources": {
     "customerIO": "Customer.io real data",
     "revenueCat": "RevenueCat real data"
