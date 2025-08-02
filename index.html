@@ -229,18 +229,30 @@
   <script>
     let updateInterval;
     
-    // 格式化货币
+    // 格式化货币 - 使用K/M格式
     function formatCurrency(amount) {
-      return new Intl.NumberFormat('en-US', {
-        style: 'currency',
-        currency: 'USD',
-        minimumFractionDigits: 2
-      }).format(amount);
+      if (amount >= 1000000) {
+        return '$' + (amount/1000000).toFixed(1) + 'M';
+      } else if (amount >= 1000) {
+        return '$' + Math.round(amount/1000) + 'K';
+      } else {
+        return new Intl.NumberFormat('en-US', {
+          style: 'currency',
+          currency: 'USD',
+          minimumFractionDigits: 2
+        }).format(amount);
+      }
     }
 
-    // 格式化数字
+    // 格式化数字 - 使用K/M格式
     function formatNumber(num) {
-      return new Intl.NumberFormat('en-US').format(num);
+      if (num >= 1000000) {
+        return (num/1000000).toFixed(1) + 'M';
+      } else if (num >= 1000) {
+        return (num/1000).toFixed(1) + 'K';
+      } else {
+        return new Intl.NumberFormat('en-US').format(num);
+      }
     }
 
     // 更新状态指示器
